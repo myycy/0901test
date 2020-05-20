@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body class="bg2">
+		<!-- 顶部放关卡和主菜单的盒子 -->
+		<div class="set-text">
+			<h2 class="play-title">关卡1</h2>
+			<a href="index.html">主菜单</a>
+		</div>
+		<!-- 中间放按钮的盒子 -->
+		<a href="javascript:void(0);" class="btnClick"></a>
+		<!-- 规则 -->
+		<div class="guize">规则:3条命你能闯几关(每关都有时间限制的哟)</div>
+		<!-- 时间 -->
+		<div class="time">倒计时:<b>60</b>s  没实现</div>
+		<!-- 血条 -->
+		<div class="xuetiao">还有<span>3</span>条命</div>
+		<!-- 下面放棍子，小人，柱子的盒子 -->
+		<div class="container">
+		<!-- 放棍子的盒子 -->
+			<div class="stick"></div>
+			<!-- 放小人的盒子 -->
+			<div class="man">
+				<img src="img/stick_stand.png"/>
+			</div>
+			<!-- 放柱子的盒子 -->
+			<div class="well-box">
+				<!-- <div class="well" style="left:0px; width: 100px;"></div>
+				<div class="well" style="left:200px; width: 100px;"></div>
+				<div class="well" style="left:500px; width: 100px;"></div>
+				<div class="well" style="left:800px; width: 100px;"></div> -->
+			</div>
+		</div>
+	
+		<!-- 放提示框的盒子 -->
+		<div class="dialog" style="display:none">
+			<!-- 放提示的文本内容 -->
+			<p class="name"></p>
+			<!-- 放提示的按钮 -->
+			<p class="dialog-btn"></p>
+		</div>
+		<script src="jquery-1.8.3.min.js"></script>
+		<script>
+			var	failText = 
+				[		
+					'志在峰巅的攀登者，不会陶醉在沿途的某个脚印之中。',
+					'海浪为劈风斩浪的航船饯行，为随波逐流的轻舟送葬。',
+					'人生最重要的一点是，永远不要迷失自己。',
+					'一个人承受孤独的能力有多大，他的能力就有多大。',
+					'实力塑造性格，性格决定命运。',
+					'普通人成功并非靠天赋，而是靠把寻常的天资发挥到不寻常的高度。',
+					'对于强者，要关注他们的灵魂，对于弱者，他关注他们的生存。',
+					'积极的人在每一次忧患中都看到一个机会，而消极的人则在每个机会都看到某种忧患。',
+					'成功不是将来才有的，而是从决定去做的那一刻起，持续累积而成。',
+					'当你感到悲哀痛苦时，最好是去学些什么东西。学习会使你永远立于不败之地。',
+					'有的人一生默默无闻，有的人一生轰轰烈烈，甚至千古流芳，为什么会这样？因为默默无闻的人只是满足于现状，而不去想怎么轰轰烈烈过一生，不要求自己，去做，去行动，怎么能够成功？',
+					'人性最可怜的就是：我们总是梦想着天边的一座奇妙的玫瑰园，而不去欣赏今天就开在我们窗口的玫瑰。',
+					'在人生的道路上，即使一切都失去了，只要一息尚存，你就没有丝毫理由绝望。因为失去的一切，又可能在新的层次上复得。',
+					'没有一劳永逸的开始；也没有无法拯救的结束。人生中，你需要把握的是：该开始的，要义无反顾地开始；该结束的，就干净利落地结束。',
+					'生命的奖赏远在旅途终点，而非起点附近。我不知道要走多少步才能达到目标，踏上第一千步的时候，仍然可能遭到失败。但我不会因此放弃，我会坚持不懈，直至成功！',
+					'不要认为只要付出就一定会有回报，这是错误的。学会有效地工作，这是经营自己强项的重要课程。',
+					'苦心人天不负，卧薪尝胆，三千越甲可吞吴。有志者事竞成，破釜沉舟，百二秦川终属楚。',
+					'生命本身是一个过程，成功与失败只是人生过程中一些小小的片段，若果把生命与成功或失败联系在一起，生命将失去本身该有的意义。',
+					'我们不要哀叹生活的不幸，诅咒命运的不公。在命运面前，我们要做强者，掐住命运的咽喉，叩问命运，改变命运。',
+					'努力和效果之间，永远有这样一段距离。成功和失败的唯一区别是，你能不能坚持挺过这段无法估计的距离。'
+				];
+				var sucText =
+					[
+						'勇敢坚毅真正之才智乃刚毅之志向。 —— 拿破仑',
+						'志向不过是记忆的奴隶，生气勃勃地降生，但却很难成长。 —— 莎士比亚',
+						'骏马是跑出来的，强兵是打出来的。',
+						'只有登上山顶，才能看到那边的风光。',
+						'如果惧怕前面跌宕的山岩，生命就永远只能是死水一潭。',
+						'平时没有跑发卫千米，占时就难以进行一百米的冲刺。',
+						'梯子的梯阶从来不是用来搁脚的，它只是让人们的脚放上一段时间，以便让别一只脚能够再往上登。',
+						'没有激流就称不上勇进，没有山峰则谈不上攀登。',
+						'真正的才智是刚毅的志向。 —— 拿破仑',
+						'山路曲折盘旋，但毕竟朝着顶峰延伸。',
+						'只有创造，才是真正的享受，只有拚搏，才是充实的生活。',
+						'敢于向黑暗宣战的人，心里必须充满光明。',
+						'种子牢记着雨滴献身的叮嘱，增强了冒尖的勇气。',
+						'自然界没有风风雨雨，大地就不会春华秋实。',
+						'只会幻想而不行动的人，永远也体会不到收获果实时的喜悦。',
+						'勤奋是你生命的密码，能译出你一部壮丽的史诗。',
+						'对于攀登者来说，失掉往昔的足迹并不可惜，迷失了继续前时的方向却很危险。',
+						'奋斗者在汗水汇集的江河里，将事业之舟驶到了理想的彼岸。',
+						'忙于采集的蜜蜂，无暇在人前高谈阔论。',
+						'勇士搏出惊涛骇流而不沉沦，懦夫在风平浪静也会溺水。'
+					];
+			//画柱子
+			var Wwidth=100;
+			function initWell(){
+				$(".well-box").html("");
+				//最大值
+				var max=$('.container').offset().top;
+				//最小值
+				var min=80;
+				//柱子left值
+				var len1=Wwidth +min+ parseInt(Math.random()*(max-min));
+				var len2=len1 + Wwidth + min + parseInt(Math.random()*(max-min));
+				var len3=len2 + Wwidth + min + parseInt(Math.random()*(max-min));
+				var allWell = $(document).width();//整个屏幕的宽度
+				if(len3>allWell-Wwidth){
+					len3=allWell-Wwidth
+				}
+				$(".well-box").append('<div class="well" style="left:0px; width: '+Wwidth+'px;"></div>')
+				$(".well-box").append('<div class="well" style="left:'+len1+'px; width: '+Wwidth+'px;"></div>')
+				$(".well-box").append('<div class="well" style="left:'+len2+'px; width: '+Wwidth+'px;"></div>')
+				$(".well-box").append('<div class="well" style="left:'+len3+'px; width: '+Wwidth+'px;"></div>')
+			}
+			initWell()
+			//鼠标按下不动 棍子长出来 鼠标松开 棍子停止增长
+			var stop = true;//true按钮可以被点击 false按钮禁用
+			$(".btnClick").mousedown(function(){
+				if(stop==true){
+					var stickH = $(".container").offset().top;//棍子最大的宽度
+					$(".stick").animate({"width":stickH+"px"},5000)
+				}
+			})
+			$(".btnClick").mouseup(function(){
+				if(stop==true){
+					$(".stick").stop();//棍子停止增长
+					stop = false;//禁止按钮点击
+					$(".stick").addClass("stickDown");//棍子倒下
+					moveMan();//小人移动
+				}
+			})
+			//小人移动
+			var num=0;
+			function moveMan(){
+				setTimeout(function(){
+					//小人图片切换
+					$(".man").find("img").attr("src","img/stick.gif");
+					//棍子的实际宽度
+					var stickW=$('.stick').width();
+					//小人移动
+					$(".man").find("img").animate({"left":stickW+"px"},2000,function(){
+						var dis1=$('.well').eq(num+1).offset().left-Wwidth;
+						var dis2=$('.well').eq(num+1).offset().left;
+						if(stickW<dis1 || stickW>dis2){
+							fail();
+						}else{
+							$(".man").find("img").attr("src","img/stick_stand.png").css("left",0).hide();
+							$(".stick").removeClass('stickDown').width("0px");
+							var next = $(".well").eq(num+1).css("left");
+							$(".well-box").animate({"left":"-"+next},500,function(){
+								$('.man').find('img').show();
+								num++;
+								stop=true;
+								if(num==3){//调到最后一个柱子时,禁止按钮点击
+									stop = false;//禁止按钮
+									//如果只是在这里禁止了按钮,在棍子停止增长的事件中没有做stop的判断
+									//棍子不能增长了,小人还是可以动
+									success();
+								}
+							})
+						}
+					})
+				})
+			}
+			
+			//失败
+			var ming=$('span').html();
+			
+			function fail(){
+				ming--;
+				$('span').html(ming);
+				
+				$(".dialog").show();//弹窗
+				var n = parseInt(Math.random()*20)
+				$(".dialog .name").html(failText[n])
+				$(".dialog .dialog-btn").html('<a href="javascript:;" class="play-agin">重玩一次</a>')	
+				if(ming==0){
+					
+					$(".dialog").hide();
+					alert('您3条命已经用完，任务失败，很可惜，您只闯到了第'+level+'关')
+					ming=3;
+					$('span').html(ming);
+					ref()
+					$(".play-title").text("关卡"+1)
+				}
+			}
+			//成功
+			function success(){
+				if(ming>0){
+					$(".dialog").hide();
+					alert('任务完成,您闯过了第'+level+'关')
+					$('span').html(ming);
+				}
+				$(".dialog").show();//弹窗
+				var n = parseInt(Math.random()*20)
+				$(".dialog .name").html(sucText[n])
+				$(".dialog .dialog-btn").html('<a href="javascript:;" class="play-agin">重玩一次</a><a href="javascript:;" class="go-next">下一关</a>')
+				//进入下一关
+				
+			}
+			$(".play-agin").live("click",function(){
+				ref();
+			})
+			$(".go-next").live("click",function(){
+				level = level+1;
+				$(".play-title").text("关卡"+level)
+				ref();
+			})
+			//刷新
+			var level = 1;
+			function ref(){
+				//注意-----------------------------------------
+				// //命数回复
+				// ming=3;
+				//弹窗隐藏
+				$(".dialog").hide();
+				//小人
+				$(".man").find("img").attr("src","img/stick_stand.png").css("left",0).hide();
+				//棍子
+				$(".stick").removeClass('stickDown').width("0px");
+				//柱子
+				$(".well-box").css("left","0px");
+				//stop=true
+				stop = true;
+				//柱子恢复num=0
+				num=0;//注意---------------------------------------------------
+				//重新生成柱子
+				initWell();
+				//背景
+				var s = parseInt(Math.random()*20+1)
+				$("body").addClass("bg"+s);
+				$(".man").find("img").show();
+			}
+			
+		</script>
+	</body>
+</html>
